@@ -1,5 +1,9 @@
 package main
 
+import (
+	"fmt"
+)
+
 // PrintSorted принимает на вход два канала, каждый из которых возвращает конечную монотонно неубывающую
 // последовательность целых чисел (т.е. отсортированные по возрастанию). Необходимо объединить значения
 // из обоих каналов и вывести их в stdout в виде одной монотонно неубывающей последовательности.
@@ -11,6 +15,24 @@ package main
 // Для проверки решения запустите тесты: go test -v
 func PrintSorted(ch1, ch2 <-chan int) {
 	// TODO: реализуйте эту функцию
+	a, ok1 := <-ch1
+	b, ok2 := <-ch2
+
+	for ok1 || ok2 {
+		if (ok1 && ok2) && (a <= b) {
+			fmt.Println(a)
+			a, ok1 = <-ch1
+		} else if (ok1 && ok2) && (a > b) {
+			fmt.Println(b)
+			b, ok2 = <-ch2
+		} else if !ok1 {
+			fmt.Println(b)
+			b, ok2 = <-ch2
+		} else {
+			fmt.Println(a)
+			a, ok1 = <-ch1
+		}
+	}
 }
 
 func main() {

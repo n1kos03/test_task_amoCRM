@@ -14,8 +14,24 @@ import (
 // Для проверки решения запустите тесты: go test -v
 func Merge(ch1, ch2 <-chan int) <-chan int {
 	// TODO: реализуйте эту функцию
-
-	return nil
+	outCh := make(chan int)
+	go func() {
+		defer close(outCh)
+		for {
+			v1, ok1 := <-ch1
+			v2, ok2 := <-ch2
+			if ok1 {
+				outCh <- v1
+			}
+			if ok2 {
+				outCh <- v2
+			}
+			if !ok1 && !ok2 {
+				break
+			}
+		}
+	}()
+	return outCh
 }
 
 func main() {
